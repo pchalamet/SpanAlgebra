@@ -1,0 +1,12 @@
+*.user
+*.suo
+*.cache
+*.ncrunchsolution
+*.dgml
+bin
+obj
+packages
+.vs
+*~
+all.userprefs
+*.mdb
