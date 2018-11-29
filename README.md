@@ -23,6 +23,7 @@ Several operations are defined:
 * intersection (`Span.intersect`) - a combinator is applied for resulting spans.
 * union (`Span.union`) - a combinator is applied for resulting spans.
 * merge (`Span.merge`)
+* validate (`Span.validate`) - check for correctness.
 
 Warnings: 
 * the list of spans must be ordered with no overlaps before using operations. It's better to build a list using `Span.union`. If you are not sure, use `Span.validate` to check for correctness.
