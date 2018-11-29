@@ -68,12 +68,12 @@ module Span =
         | _ -> spans
 
     let validate spans =
-        let rec validate { Span.Start = prevStart; Span.Stop = prevStop; Span.Value = prevValue } spans =
-            if prevStop <= prevStart then failwithf "Start must be stricly lower than Stop: %A" { Span.Start = prevStart; Span.Stop = prevStop; Span.Value = prevValue }
+        let rec validate ({ Span.Start = prevStart; Span.Stop = prevStop; Span.Value = prevValue } as prevHead) spans =
+            if prevStop <= prevStart then failwithf "%A has Start after Stop" prevHead
             match spans with
             | [] -> ()
-            | { Span.Start = start; Span.Stop = _; Span.Value = _ } :: tail -> if start < prevStop then failwithf "Span %A starts before %A" spans.Head { Span.Start = prevStart; Span.Stop = prevStop; Span.Value = prevValue }
-                                                                               validate spans.Head tail
+            | ({ Span.Start = start; Span.Stop = _; Span.Value = _ } as head) :: tail -> if start < prevStop then failwithf "%A starts before %A" head prevHead
+                                                                                         validate spans.Head tail
 
         match spans with
         | [] -> ()
