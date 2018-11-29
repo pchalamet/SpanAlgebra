@@ -6,7 +6,6 @@ open SpanAlgebra
 let intersectionChar = (char)0x2229
 let unionChar = (char)0x222A
 let plusChar = '+'
-let fmt a c b = sprintf "%s %c %s" a c b
 
 type Combine =
     | A = 1
@@ -15,29 +14,31 @@ type Combine =
 
 [<Test>]
 let checkIntersection () =
-    let segs1 = [ createSpan 0 1 Combine.A
-                  createSpan 4 5 Combine.A
-                  createSpan 7 10 Combine.A
-                  createSpan 13 15 Combine.A
-                  createSpan 17 20 Combine.A 
-                  createSpan 25 200 Combine.A ]
+    let spans1 = [ createSpan 0 1 Combine.A
+                   createSpan 4 5 Combine.A
+                   createSpan 7 10 Combine.A
+                   createSpan 13 15 Combine.A
+                   createSpan 17 20 Combine.A 
+                   createSpan 25 200 Combine.A ]
 
-    let segs2 = [ createSpan 2 3 Combine.B
-                  createSpan 5 6 Combine.B
-                  createSpan 8 11 Combine.B 
-                  createSpan 12 14 Combine.B
-                  createSpan 16 21 Combine.B 
-                  createSpan 26 40 Combine.B
-                  createSpan 45 50 Combine.B
-                  createSpan 80 100 Combine.B ]
+    let spans2 = [ createSpan 2 3 Combine.B
+                   createSpan 5 6 Combine.B
+                   createSpan 8 11 Combine.B 
+                   createSpan 12 14 Combine.B
+                   createSpan 16 21 Combine.B 
+                   createSpan 26 40 Combine.B
+                   createSpan 45 50 Combine.B
+                   createSpan 80 100 Combine.B ]
 
-    let res = intersect segs1 segs2 (|||)
+    let res = intersect spans1 spans2 (|||)
     printfn "input1:"
-    segs1 |> List.iter (fun x -> printfn "[%d, %d] = %A" x.Start x.Stop x.Value)
+    spans1 |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    printfn ""
     printfn "input2:"
-    segs2 |> List.iter (fun x -> printfn "[%d, %d] = %A" x.Start x.Stop x.Value)
+    spans2 |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    printfn ""
     printfn "result:"
-    res |> List.iter (fun x -> printfn "[%d, %d] = %A" x.Start x.Stop x.Value)
+    res |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
 
     let expected = [ createSpan 8 10 Combine.AnB
                      createSpan 13 14 Combine.AnB
@@ -50,29 +51,31 @@ let checkIntersection () =
 
 [<Test>]
 let checkUnion () =
-    let segs1 = [ createSpan 0 1 Combine.A
-                  createSpan 4 5 Combine.A
-                  createSpan 7 10 Combine.A 
-                  createSpan 13 15 Combine.A
-                  createSpan 17 20 Combine.A 
-                  createSpan 25 200 Combine.A ]
+    let spans1 = [ createSpan 0 1 Combine.A
+                   createSpan 4 5 Combine.A
+                   createSpan 7 10 Combine.A 
+                   createSpan 13 15 Combine.A
+                   createSpan 17 20 Combine.A 
+                   createSpan 25 200 Combine.A ]
 
-    let segs2 = [ createSpan 2 3 Combine.B
-                  createSpan 5 6 Combine.B
-                  createSpan 8 11 Combine.B
-                  createSpan 12 14 Combine.B
-                  createSpan 16 21 Combine.B
-                  createSpan 26 40 Combine.B
-                  createSpan 45 50 Combine.B
-                  createSpan 80 100 Combine.B ]
+    let spans2 = [ createSpan 2 3 Combine.B
+                   createSpan 5 6 Combine.B
+                   createSpan 8 11 Combine.B
+                   createSpan 12 14 Combine.B
+                   createSpan 16 21 Combine.B
+                   createSpan 26 40 Combine.B
+                   createSpan 45 50 Combine.B
+                   createSpan 80 100 Combine.B ]
 
     printfn "input1:"
-    segs1 |> List.iter (fun x -> printfn "[%d, %d] = %A" x.Start x.Stop x.Value)
+    spans1 |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    printfn ""
     printfn "input2:"
-    segs2 |> List.iter (fun x -> printfn "[%d, %d] = %A" x.Start x.Stop x.Value)
+    spans2 |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    printfn ""
     printfn "result:"
-    let res = union segs1 segs2 (|||)
-    res |> List.iter (fun x -> printfn "[%d, %d] = %A" x.Start x.Stop x.Value)
+    let res = union spans1 spans2 (|||)
+    res |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
 
     let expected = [ createSpan 0 1 Combine.A
                      createSpan 2 3 Combine.B
@@ -107,6 +110,8 @@ let checkMerge () =
     printfn "input:"
     segs |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
     let res = merge segs
+    printfn ""
+    printfn "result:"
     res |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
     
     let expected = [ createSpan 0 1 Combine.A

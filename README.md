@@ -2,53 +2,110 @@
 
 This is a simple F# library to compute intersections and unions on list of spans.
 
-But, what is a span ? It is a value spanning on interval [start, end[
+# Operations
+
+## Type
+But, what is a span ? It is a type with a value spanning on an interval [start, end[ (ie: start is included but end is not).
+According to the definition, an interval can't be empty.
+
+Type has containts:
+* start and end can be whatever you want until it's comparable (intersection & union)
+* value can also be whatever you want until it's equatable (merge)
+
+Several operations are defined:
+* intersection (Span.intersect) - a combinator is applied for resulting spans.
+* union (Span.union) - a combinator is applied for resulting spans.
+* merge (Span.merge)
 
 ## Intersection
+Compute the intersection of 2 lists of spans.
 
 ````
 input1:
-  [0, 1] = [0-1]
-  [4, 5] = [4-5]
-  [7, 10] = [7-10]
-  [13, 15] = [13-15]
-  [17, 20] = 17-20]
+  [0, 1] = A
+  [4, 5] = A
+  [7, 10] = A
+  [13, 15] = A
+  [17, 20] = A
+  [25, 200] = A
 
 input2:
-  [2, 3] = [2-3]
-  [5, 6] = [5-6]
-  [8, 11] = [8-11]
-  [12, 14] = [12-14]
-  [16, 21] = [16-21]
+  [2, 3] = B
+  [5, 6] = B
+  [8, 11] = B
+  [12, 14] = B
+  [16, 21] = B
+  [26, 40] = B
+  [45, 50] = B
+  [80, 100] = B
 
 result:
-  [8, 10] = [7-10] ∩ [8-11]
-  [13, 14] = [12-14] ∩ [13-15]
-  [17, 20] = [16-21] ∩ 17-20]
+  [8, 10] = AnB
+  [13, 14] = AnB
+  [17, 20] = AnB
+  [26, 40] = AnB
+  [45, 50] = AnB
+  [80, 100] = AnB
 ````
 
 ## Union
+Compute the union of 2 lists of spans.
 
 ````
 input1:
-  [0, 1] = [0-1]
-  [4, 5] = [4-5]
-  [7, 10] = [7-10]
-  [13, 15] = [13-15]
-  [17, 20] = 17-20]
+  [0, 1] = A
+  [4, 5] = A
+  [7, 10] = A
+  [13, 15] = A
+  [17, 20] = A
+  [25, 200] = A
 
 input2:
-  [2, 3] = [2-3]
-  [5, 6] = [5-6]
-  [8, 11] = [8-11]
-  [12, 14] = [12-14]
-  [16, 21] = [16-21]
+  [2, 3] = B
+  [5, 6] = B
+  [8, 11] = B
+  [12, 14] = B
+  [16, 21] = B
+  [26, 40] = B
+  [45, 50] = B
+  [80, 100] = B
 
 result:
-  [0, 1] = [0-1]
-  [2, 3] = [2-3]
-  [4, 6] = [4-5] ∪ [5-6]
-  [7, 11] = [7-10] ∪ [8-11]
-  [12, 15] = [12-14] ∪ [13-15]
-  [16, 21] = [16-21] ∪ 17-20]
+  [0, 1] = A
+  [2, 3] = B
+  [4, 5] = A
+  [5, 6] = B
+  [7, 8] = A
+  [8, 10] = AnB
+  [10, 11] = B
+  [12, 13] = B
+  [13, 14] = AnB
+  [14, 15] = A
+  [16, 17] = B
+  [17, 20] = AnB
+  [20, 21] = B
+  [25, 26] = A
+  [26, 40] = AnB
+  [40, 45] = A
+  [45, 50] = AnB
+  [50, 80] = A
+  [80, 100] = AnB
+  [100, 200] = A
+````
+
+## Merge
+Merge adjacent spans of a list.
+
+````
+input:
+  [0, 1] = A
+  [2, 3] = A
+  [3, 10] = A
+  [13, 15] = B
+  [15, 20] = B
+
+result:
+  [0, 1] = A
+  [2, 10] = A
+  [13, 20] = B
 ````
