@@ -1,6 +1,6 @@
 namespace SpanAlgebra
 
-type Span<'t, 'v when 't : comparison> = 
+type Span<'t, 'v when 't : comparison and 'v : equality> = 
     { Start : 't
       Stop : 't
       Value : 'v}
@@ -59,10 +59,22 @@ module Span =
 
     // merge adjacent spans in the list if the value is the same
     // typically intersect and union do not produce optimal result (for code simplicity)
-    let rec merge span =
-        match span with
+    let rec merge spans =
+        match spans with
         | head1 :: head2 :: tail -> if head1.Stop = head2.Start && head1.Value = head2.Value then
                                         merge ({ head1 with Stop = head2.Stop } :: merge tail)
                                     else
                                         head1 :: merge (head2::tail)
-        | _ -> span
+        | _ -> spans
+
+    let validate spans =
+        let rec validate { Span.Start = prevStart; Span.Stop = prevStop; Span.Value = prevValue } spans =
+            if prevStop <= prevStart then failwithf "Start must be stricly lower than Stop: %A" { Span.Start = prevStart; Span.Stop = prevStop; Span.Value = prevValue }
+            match spans with
+            | [] -> ()
+            | { Span.Start = start; Span.Stop = _; Span.Value = _ } :: tail -> if start < prevStop then failwithf "Span %A starts before %A" spans.Head { Span.Start = prevStart; Span.Stop = prevStop; Span.Value = prevValue }
+                                                                               validate spans.Head tail
+
+        match spans with
+        | [] -> ()
+        | head:: tail -> validate head tail

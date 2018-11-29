@@ -101,15 +101,15 @@ let checkUnion () =
 
 [<Test>]
 let checkMerge () =
-    let segs = [ Span.createSpan 0 1 Combine.A
-                 Span.createSpan 2 3 Combine.A
-                 Span.createSpan 3 10 Combine.A
-                 Span.createSpan 13 15 Combine.B
-                 Span.createSpan 15 20 Combine.B ]
+    let spans = [ Span.createSpan 0 1 Combine.A
+                  Span.createSpan 2 3 Combine.A
+                  Span.createSpan 3 10 Combine.A
+                  Span.createSpan 13 15 Combine.B
+                  Span.createSpan 15 20 Combine.B ]
 
     printfn "input:"
-    segs |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
-    let res = Span.merge segs
+    spans |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    let res = Span.merge spans
     printfn ""
     printfn "result:"
     res |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
@@ -138,5 +138,40 @@ let failureIfStartGreaterThanStop () =
     try
         Span.createSpan 10 8 "toto" |> ignore
         failwithf "Can't create interval with Start greater than Stop"
+    with
+        _ -> ()
+
+[<Test>]
+let checkValidateNominal () =
+    let segs = [ Span.createSpan 0 1 Combine.A
+                 Span.createSpan 2 3 Combine.A
+                 Span.createSpan 3 10 Combine.A
+                 Span.createSpan 13 15 Combine.B
+                 Span.createSpan 15 20 Combine.B ]
+    segs |> Span.validate
+
+[<Test>]
+let checkValidateRejectsInvalidSpan () =
+    let segs = [ Span.createSpan 0 1 Combine.A
+                 Span.createSpan 2 3 Combine.A
+                 { Span.Start = 10; Span.Stop = 3; Span.Value = Combine.A }
+                 Span.createSpan 13 15 Combine.B
+                 Span.createSpan 15 20 Combine.B ]
+    try
+        segs |> Span.validate
+        failwithf "Validation should have detected invalid span"
+    with
+        _ -> ()
+
+[<Test>]
+let checkValidateRejectsUnorderedSpans () =
+    let segs = [ Span.createSpan 0 1 Combine.A
+                 Span.createSpan 3 10 Combine.A
+                 Span.createSpan 2 3 Combine.A
+                 Span.createSpan 13 15 Combine.B
+                 Span.createSpan 15 20 Combine.B ]
+    try
+        segs |> Span.validate
+        failwithf "Validation should have detected unordered spans"
     with
         _ -> ()

@@ -5,20 +5,28 @@ This is a simple F# library to compute intersections and unions on list of spans
 # Operations
 
 ## Type
-But, what is a span ? It is a type with a value spanning on an interval [start, end[ (ie: start is included but end is not).
-According to the definition, an interval can't be empty.
+But, what is a span ? It is a type with a value spanning on an interval [start, end[ (ie: start is included but end is not). Also, according to the definition, the interval can't be empty.
 
 Type has containts:
 * start and end can be whatever you want until it's comparable (intersection & union)
 * value can also be whatever you want until it's equatable (merge)
 
+````
+type Span<'t, 'v when 't : comparison and 'v : equality> = 
+    { Start : 't
+      Stop : 't
+      Value : 'v}
+````
+
 Several operations are defined:
-* intersection (Span.intersect) - a combinator is applied for resulting spans.
-* union (Span.union) - a combinator is applied for resulting spans.
-* merge (Span.merge)
+* intersection (`Span.intersect`) - a combinator is applied for resulting spans.
+* union (`Span.union`) - a combinator is applied for resulting spans.
+* merge (`Span.merge`)
+
+Warning: the list of spans must be ordered with no overlaps before using operations. It's better to build a list using `Span.union`. If you are not sure, use `Span.validate` to check for correctness.
 
 ## Intersection
-Compute the intersection of 2 lists of spans.
+Compute the intersection of two lists of spans.
 
 ````
 input1:
@@ -49,7 +57,7 @@ result:
 ````
 
 ## Union
-Compute the union of 2 lists of spans.
+Compute the union of two lists of spans.
 
 ````
 input1:
