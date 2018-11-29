@@ -1,6 +1,8 @@
-﻿# Segment Algebra
+﻿# Span Algebra
 
-This is a simple F# library to compute intersections and unions on lost of segments.
+This is a simple F# library to compute intersections and unions on list of spans.
+
+But, what is a span ? It is a value spanning on interval [start, end[
 
 ## Intersection
 

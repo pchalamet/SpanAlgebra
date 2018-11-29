@@ -13,11 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Intersection.fs" />
+    <Compile Include="Span.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IntervalAlgebra\IntervalAlgebra.fsproj" />
+    <ProjectReference Include="..\IntervalAlgebra\SpanAlgebra.fsproj" />
   </ItemGroup>
 </Project>
