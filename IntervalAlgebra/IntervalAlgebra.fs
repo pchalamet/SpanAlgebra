@@ -1,15 +1,19 @@
 module IntervalAlgebra
-open System
-
 
 type Interval<'t, 'v when 't : comparison> = 
     { Start : 't
       Stop : 't
       Value : 'v}
 
-let createInterval start stop value = { Start = start; Stop = stop; Value = value }
+// helper function to create a valid interval
+// if you do not use it you are at your own risks :-)
+let createInterval start stop value = 
+    if start < stop then { Start = start; Stop = stop; Value = value }
+    else failwithf "start must be strictly lower than stop"
 
-let intersect<'t,'v when 't : comparison> (int1 : Interval<'t, 'v> list) (int2 : Interval<'t, 'v> list) (comb : 'v -> 'v -> 'v) =
+// compute the intersection of two intervals lists
+// the result is not necessarily optimal - see merge
+let intersect<'t,'v when 't : comparison and 'v : equality> (int1 : Interval<'t, 'v> list) (int2 : Interval<'t, 'v> list) (comb : 'v -> 'v -> 'v) =
     let rec intersect (int1 : Interval<'t, 'v> list) (int2 : Interval<'t, 'v> list) =
         match int1, int2 with
         | head1::tail1, head2::tail2 -> if (head2.Start < head1.Start) || (head1.Start = head2.Start && head2.Stop < head1.Stop) then intersect int2 int1
@@ -29,7 +33,9 @@ let intersect<'t,'v when 't : comparison> (int1 : Interval<'t, 'v> list) (int2 :
         | _ -> []
     intersect int1 int2
 
-let union<'t,'v when 't : comparison> (int1 : Interval<'t, 'v> list) (int2 : Interval<'t, 'v> list) (comb : 'v -> 'v -> 'v) =
+// compute the union of two intervals lists
+// the result is not necessarily optimal - see merge
+let union<'t,'v when 't : comparison and 'v : equality> (int1 : Interval<'t, 'v> list) (int2 : Interval<'t, 'v> list) (comb : 'v -> 'v -> 'v) =
     let rec union (int1 : Interval<'t, 'v> list) (int2 : Interval<'t, 'v> list) =
         match int1, int2 with
         | head1::tail1, head2::tail2 -> if (head2.Start < head1.Start) || (head1.Start = head2.Start && head1.Stop < head2.Stop) then union int2 int1
@@ -48,5 +54,11 @@ let union<'t,'v when 't : comparison> (int1 : Interval<'t, 'v> list) (int2 : Int
         | _ -> int1 @ int2
     union int1 int2                                
 
-let rec combine<'t,'v when 't : comparison> (elt : Interval<'t, 'v>) (int : Interval<'t, 'v> list) (comb : 'v -> 'v -> 'v) =
-    union int [elt] comb
+// merge adjacent elements in the list if the value is the same
+let rec merge<'t,'v when 't : comparison and 'v : equality> (int : Interval<'t, 'v> list) =
+    match int with
+    | head1 :: head2 :: tail -> if head1.Stop = head2.Start && head1.Value = head2.Value then
+                                    merge ({ head1 with Stop = head2.Stop } :: merge tail)
+                                else
+                                    head1 :: merge (head2 :: tail)
+    | _ -> int
