@@ -32,13 +32,13 @@ let checkIntersection () =
 
     let res = Span.intersect spans1 spans2 (|||)
     printfn "input1:"
-    spans1 |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    spans1 |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
     printfn ""
     printfn "input2:"
-    spans2 |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    spans2 |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
     printfn ""
     printfn "result:"
-    res |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    res |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
 
     let expected = [ Span.create 8 10 Combine.AnB
                      Span.create 13 14 Combine.AnB
@@ -68,14 +68,14 @@ let checkUnion () =
                    Span.create 80 100 Combine.B ]
 
     printfn "input1:"
-    spans1 |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    spans1 |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
     printfn ""
     printfn "input2:"
-    spans2 |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    spans2 |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
     printfn ""
     printfn "result:"
     let res = Span.union spans1 spans2 (|||)
-    res |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    res |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
 
     let expected = [ Span.create 0 1 Combine.A
                      Span.create 2 3 Combine.B
@@ -108,11 +108,11 @@ let checkMerge () =
                   Span.create 15 20 Combine.B ]
 
     printfn "input:"
-    spans |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    spans |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
     let res = Span.merge spans
     printfn ""
     printfn "result:"
-    res |> List.iter (fun x -> printfn "  [%d, %d] = %A" x.Start x.Stop x.Value)
+    res |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
     
     let expected = [ Span.create 0 1 Combine.A
                      Span.create 2 10 Combine.A
