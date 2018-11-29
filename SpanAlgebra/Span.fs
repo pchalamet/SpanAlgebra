@@ -5,7 +5,6 @@ type Span<'t, 'v when 't : comparison> =
       Stop : 't
       Value : 'v}
 
-[<AutoOpen>]
 module Span =
 
     // helper function to create a valid span
