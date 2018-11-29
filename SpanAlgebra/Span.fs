@@ -58,6 +58,7 @@ module Span =
         union span1 span2                                
 
     // merge adjacent spans in the list if the value is the same
+    // typically intersect and union do not produce optimal result (for code simplicity)
     let rec merge span =
         match span with
         | head1 :: head2 :: tail -> if head1.Stop = head2.Start && head1.Value = head2.Value then
