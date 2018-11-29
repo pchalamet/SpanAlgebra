@@ -9,7 +9,7 @@ module Span =
 
     // helper function to create a valid span
     // if you do not use it you are at your own risks :-)
-    let createSpan start stop value = 
+    let create start stop value = 
         if start < stop then { Start = start; Stop = stop; Value = value }
         else failwithf "start must be strictly lower than stop"
 
