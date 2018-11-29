@@ -8,15 +8,15 @@ type Span<'t, 'v when 't : comparison> =
 [<AutoOpen>]
 module Span =
 
-    //// helper function to create a valid span
-    //// if you do not use it you are at your own risks :-)
+    // helper function to create a valid span
+    // if you do not use it you are at your own risks :-)
     let createSpan start stop value = 
         if start < stop then { Start = start; Stop = stop; Value = value }
         else failwithf "start must be strictly lower than stop"
 
     // compute the intersection of two spans lists
     // the result is not necessarily optimal - see merge
-    let intersect span1 span2 (comb : 'v -> 'v -> 'v) =
+    let intersect span1 span2 comb =
         let rec intersect span1 span2 =
             match span1, span2 with
             | head1::tail1, head2::tail2 -> if (head2.Start < head1.Start) || (head1.Start = head2.Start && head2.Stop < head1.Stop) then intersect span2 span1
@@ -38,7 +38,7 @@ module Span =
 
     // compute the union of two span lists
     // the result is not necessarily optimal - see merge
-    let union span1 span2 (comb : 'v -> 'v -> 'v) =
+    let union span1 span2 comb =
         let rec union span1 span2 =
             match span1, span2 with
             | head1::tail1, head2::tail2 -> if (head2.Start < head1.Start) || (head1.Start = head2.Start && head1.Stop < head2.Stop) then union span2 span1
@@ -64,5 +64,5 @@ module Span =
         | head1 :: head2 :: tail -> if head1.Stop = head2.Start && head1.Value = head2.Value then
                                         merge ({ head1 with Stop = head2.Stop } :: merge tail)
                                     else
-                                        head1 :: merge (head2 :: tail)
+                                        head1 :: merge (head2::tail)
         | _ -> span
