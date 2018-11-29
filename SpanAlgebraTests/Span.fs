@@ -30,7 +30,7 @@ let checkIntersection () =
                    Span.create 45 50 Combine.B
                    Span.create 80 100 Combine.B ]
 
-    let res = Span.intersect spans1 spans2 (|||)
+    let res = Span.intersect spans1 spans2 (|||) |> List.ofSeq
     printfn "input1:"
     spans1 |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
     printfn ""
@@ -74,7 +74,7 @@ let checkUnion () =
     spans2 |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
     printfn ""
     printfn "result:"
-    let res = Span.union spans1 spans2 (|||)
+    let res = Span.union spans1 spans2 (|||) |> List.ofSeq
     res |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
 
     let expected = [ Span.create 0 1 Combine.A
@@ -109,7 +109,7 @@ let checkMerge () =
 
     printfn "input:"
     spans |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
-    let res = Span.merge spans
+    let res = Span.merge spans |> List.ofSeq
     printfn ""
     printfn "result:"
     res |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
