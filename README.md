@@ -19,11 +19,11 @@ type Span<'t, 'v when 't : comparison and 'v : equality> =
 ````
 
 Several operations are defined:
-* new (`Span.create`) - validate parameters and create a new `Span`.
-* intersection (`Span.intersect`) - a combinator is applied for resulting spans.
-* union (`Span.union`) - a combinator is applied for resulting spans.
-* merge (`Span.merge`)
-* validate (`Span.validate`) - check for correctness.
+* new (`Span.create`): validate parameters and create a new `Span`.
+* intersection (`Span.intersect`): compute the intersection of two lists. A combinator is applied for resulting spans.
+* union (`Span.union`): compute the union of two lists. A combinator is applied for resulting spans.
+* merge (`Span.merge`): merge adjacent spans if possible.
+* validate (`Span.validate`): check for correctness.
 
 Warnings: 
 * the list of spans must be ordered with no overlaps before using operations. It's better to build a list using `Span.union`. If you are not sure, use `Span.validate` to check for correctness.
