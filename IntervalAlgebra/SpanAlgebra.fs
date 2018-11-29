@@ -5,18 +5,19 @@ type Span<'t, 'v when 't : comparison> =
       Stop : 't
       Value : 'v}
 
+[<AutoOpen>]
 module Span =
 
-    // helper function to create a valid span
-    // if you do not use it you are at your own risks :-)
+    //// helper function to create a valid span
+    //// if you do not use it you are at your own risks :-)
     let createSpan start stop value = 
         if start < stop then { Start = start; Stop = stop; Value = value }
         else failwithf "start must be strictly lower than stop"
 
     // compute the intersection of two spans lists
     // the result is not necessarily optimal - see merge
-    let intersect<'t,'v when 't : comparison and 'v : equality> (span1 : Span<'t, 'v> list) (span2 : Span<'t, 'v> list) (comb : 'v -> 'v -> 'v) =
-        let rec intersect (span1 : Span<'t, 'v> list) (span2 : Span<'t, 'v> list) =
+    let intersect span1 span2 (comb : 'v -> 'v -> 'v) =
+        let rec intersect span1 span2 =
             match span1, span2 with
             | head1::tail1, head2::tail2 -> if (head2.Start < head1.Start) || (head1.Start = head2.Start && head2.Stop < head1.Stop) then intersect span2 span1
                                             elif head1.Stop <= head2.Start then intersect tail1 span2
@@ -37,8 +38,8 @@ module Span =
 
     // compute the union of two span lists
     // the result is not necessarily optimal - see merge
-    let union<'t,'v when 't : comparison and 'v : equality> (span1 : Span<'t, 'v> list) (span2 : Span<'t, 'v> list) (comb : 'v -> 'v -> 'v) =
-        let rec union (span1 : Span<'t, 'v> list) (span2 : Span<'t, 'v> list) =
+    let union span1 span2 (comb : 'v -> 'v -> 'v) =
+        let rec union span1 span2 =
             match span1, span2 with
             | head1::tail1, head2::tail2 -> if (head2.Start < head1.Start) || (head1.Start = head2.Start && head1.Stop < head2.Stop) then union span2 span1
                                             elif head1.Stop <= head2.Start then head1 :: union tail1 span2
@@ -58,7 +59,7 @@ module Span =
         union span1 span2                                
 
     // merge adjacent spans in the list if the value is the same
-    let rec merge<'t,'v when 't : comparison and 'v : equality> (span : Span<'t, 'v> list) =
+    let rec merge span =
         match span with
         | head1 :: head2 :: tail -> if head1.Stop = head2.Start && head1.Value = head2.Value then
                                         merge ({ head1 with Stop = head2.Stop } :: merge tail)

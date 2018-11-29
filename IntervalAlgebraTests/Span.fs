@@ -1,7 +1,6 @@
 module SpanAlgebraTests
 open NUnit.Framework
 open SpanAlgebra
-open SpanAlgebra.Span
 
 
 let intersectionChar = (char)0x2229
