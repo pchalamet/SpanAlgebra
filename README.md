@@ -23,6 +23,7 @@ Several operations are defined:
 * intersection (`Span.intersect`): compute the intersection of two lists. A combinator is applied for resulting spans.
 * union (`Span.union`): compute the union of two lists. A combinator is applied for resulting spans.
 * merge (`Span.merge`): merge adjacent spans if possible.
+* fill (`Span.fill`): fill holes with a default value.
 * validate (`Span.validate`): check for correctness.
 
 Warnings: 

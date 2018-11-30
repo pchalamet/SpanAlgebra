@@ -67,6 +67,18 @@ module Span =
                                         head1 :: merge (head2::tail)
         | _ -> spans
 
+    // fill holes with provided value
+    let fill spans value =
+        let rec fill prevStop spans =
+            match spans with
+            | [] -> []
+            | ({ Start = start; Stop = stop; Value = _ } as head) :: tail -> if prevStop = start then head :: fill stop tail
+                                                                             else { Start = prevStop; Stop = start; Value = value } :: head :: fill stop tail
+        match spans with
+        | [] -> []
+        | ({ Start = _; Stop = stop; Value = _ } as head) :: tail -> head :: fill stop tail
+
+    // check list for correctness
     let validate spans =
         let rec validate ({ Span.Start = prevStart; Span.Stop = prevStop; Span.Value = prevValue } as prevHead) spans =
             if prevStop <= prevStart then failwithf "%A has Start after Stop" prevHead

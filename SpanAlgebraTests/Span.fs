@@ -120,6 +120,32 @@ let checkMerge () =
     Assert.AreEqual(expected, res)
 
 [<Test>]
+let checkFill () =
+    let spans = [ Span.create 0 1 Combine.A
+                  Span.create 2 3 Combine.A
+                  Span.create 3 10 Combine.A
+                  Span.create 13 15 Combine.B
+                  Span.create 15 20 Combine.B ]
+
+    printfn "input:"
+    spans |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
+    let res = Span.fill spans Combine.AnB
+    printfn ""
+    printfn "result:"
+    res |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
+
+    let expected = [ Span.create 0 1 Combine.A
+                     Span.create 1 2 Combine.AnB
+                     Span.create 2 3 Combine.A
+                     Span.create 3 10 Combine.A
+                     Span.create 10 13 Combine.AnB
+                     Span.create 13 15 Combine.B
+                     Span.create 15 20 Combine.B ]
+    Assert.AreEqual(expected, res)
+
+
+
+[<Test>]
 let checkCreateNominal () =
     let int = Span.create 10 20 "toto"
     let expected = { Start = 10; Stop = 20; Value = "toto" }
