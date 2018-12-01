@@ -156,7 +156,8 @@ let checkValidateNominal () =
                  Span.create Combine.A 3 10
                  Span.create Combine.B 13 15
                  Span.create Combine.B 15 20 ]
-    segs |> Span.validate
+    let res = segs |> Span.validate
+    Assert.AreEqual(segs, res)
 
 [<Test>]
 let checkValidateRejectsInvalidSpan () =
@@ -166,7 +167,7 @@ let checkValidateRejectsInvalidSpan () =
                  Span.create Combine.B 13 15
                  Span.create Combine.B 15 20 ]
     try
-        segs |> Span.validate
+        segs |> Span.validate |> ignore
         failwithf "Validation should have detected invalid span"
     with
         _ -> ()
@@ -179,7 +180,7 @@ let checkValidateRejectsUnorderedSpans () =
                  Span.create Combine.B 13 15
                  Span.create Combine.B 15 20 ]
     try
-        segs |> Span.validate
+        segs |> Span.validate |> ignore
         failwithf "Validation should have detected unordered spans"
     with
         _ -> ()

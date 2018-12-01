@@ -76,10 +76,11 @@ module Span =
         let rec validate ({ Span.Start = prevStart; Span.Stop = prevStop; Span.Value = prevValue } as prevHead) spans =
             if prevStop <= prevStart then failwithf "%A has Start after Stop" prevHead
             match spans with
-            | [] -> ()
+            | [] -> [prevHead]
             | ({ Span.Start = start; Span.Stop = _; Span.Value = _ } as head) :: tail -> if start < prevStop then failwithf "%A starts before %A" head prevHead
-                                                                                         validate spans.Head tail
+                                                                                         prevHead :: validate spans.Head tail
 
         match spans with
-        | [] -> ()
+        | [] -> []
         | head:: tail -> validate head tail
+
