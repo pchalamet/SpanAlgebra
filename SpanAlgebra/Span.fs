@@ -67,8 +67,8 @@ module Span =
                                         head1 :: merge (head2::tail)
         | _ -> spans
 
-    // fill holes with provided value
-    let empty value start stop =
+    // create a single span list
+    let singleton value start stop =
         create value start stop |> List.singleton
  
     // check list for correctness

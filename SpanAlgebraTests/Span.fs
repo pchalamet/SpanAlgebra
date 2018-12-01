@@ -120,8 +120,8 @@ let checkMerge () =
     Assert.AreEqual(expected, res)
 
 [<Test>]
-let checkEmpty () =
-    let res = Span.empty Combine.A 1 10
+let checkSingleton () =
+    let res = Span.singleton Combine.A 1 10
     let expected = [ { Value = Combine.A; Start = 1; Stop = 10 } ]
     Assert.AreEqual(expected, res)
 
