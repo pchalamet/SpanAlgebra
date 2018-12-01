@@ -68,8 +68,8 @@ module Span =
         | _ -> spans
 
     // fill holes with provided value
-    let empty start stop value =
-        create start stop value |> List.singleton
+    let empty value start stop =
+        create value start stop |> List.singleton
  
     // check list for correctness
     let validate spans =
