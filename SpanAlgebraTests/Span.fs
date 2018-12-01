@@ -14,23 +14,23 @@ type Combine =
 
 [<Test>]
 let checkIntersection () =
-    let spans1 = [ Span.create 0 1 Combine.A
-                   Span.create 4 5 Combine.A
-                   Span.create 7 10 Combine.A
-                   Span.create 13 15 Combine.A
-                   Span.create 17 20 Combine.A 
-                   Span.create 25 200 Combine.A ]
+    let spans1 = [ Span.create Combine.A 0 1
+                   Span.create Combine.A 4 5
+                   Span.create Combine.A 7 10
+                   Span.create Combine.A 13 15
+                   Span.create Combine.A 17 20 
+                   Span.create Combine.A 25 200 ]
 
-    let spans2 = [ Span.create 2 3 Combine.B
-                   Span.create 5 6 Combine.B
-                   Span.create 8 11 Combine.B 
-                   Span.create 12 14 Combine.B
-                   Span.create 16 21 Combine.B 
-                   Span.create 26 40 Combine.B
-                   Span.create 45 50 Combine.B
-                   Span.create 80 100 Combine.B ]
+    let spans2 = [ Span.create Combine.B 2 3
+                   Span.create Combine.B 5 6 
+                   Span.create Combine.B 8 11 
+                   Span.create Combine.B 12 14
+                   Span.create Combine.B 16 21 
+                   Span.create Combine.B 26 40
+                   Span.create Combine.B 45 50
+                   Span.create Combine.B 80 100 ]
 
-    let res = Span.intersect spans1 spans2 (|||)
+    let res = Span.intersect (|||) spans1 spans2
     printfn "input1:"
     spans1 |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
     printfn ""
@@ -40,32 +40,32 @@ let checkIntersection () =
     printfn "result:"
     res |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
 
-    let expected = [ Span.create 8 10 Combine.AnB
-                     Span.create 13 14 Combine.AnB
-                     Span.create 17 20 Combine.AnB 
-                     Span.create 26 40 Combine.AnB
-                     Span.create 45 50 Combine.AnB
-                     Span.create 80 100 Combine.AnB ]
+    let expected = [ Span.create Combine.AnB 8 10
+                     Span.create Combine.AnB 13 14
+                     Span.create Combine.AnB 17 20
+                     Span.create Combine.AnB 26 40
+                     Span.create Combine.AnB 45 50
+                     Span.create Combine.AnB 80 100 ]
     Assert.AreEqual(expected, res)
 
 
 [<Test>]
 let checkUnion () =
-    let spans1 = [ Span.create 0 1 Combine.A
-                   Span.create 4 5 Combine.A
-                   Span.create 7 10 Combine.A 
-                   Span.create 13 15 Combine.A
-                   Span.create 17 20 Combine.A 
-                   Span.create 25 200 Combine.A ]
+    let spans1 = [ Span.create Combine.A 0 1
+                   Span.create Combine.A 4 5
+                   Span.create Combine.A 7 10
+                   Span.create Combine.A 13 15
+                   Span.create Combine.A 17 20 
+                   Span.create Combine.A 25 200 ]
 
-    let spans2 = [ Span.create 2 3 Combine.B
-                   Span.create 5 6 Combine.B
-                   Span.create 8 11 Combine.B
-                   Span.create 12 14 Combine.B
-                   Span.create 16 21 Combine.B
-                   Span.create 26 40 Combine.B
-                   Span.create 45 50 Combine.B
-                   Span.create 80 100 Combine.B ]
+    let spans2 = [ Span.create Combine.B 2 3
+                   Span.create Combine.B 5 6 
+                   Span.create Combine.B 8 11 
+                   Span.create Combine.B 12 14
+                   Span.create Combine.B 16 21 
+                   Span.create Combine.B 26 40
+                   Span.create Combine.B 45 50
+                   Span.create Combine.B 80 100 ]
 
     printfn "input1:"
     spans1 |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
@@ -74,38 +74,38 @@ let checkUnion () =
     spans2 |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
     printfn ""
     printfn "result:"
-    let res = Span.union spans1 spans2 (|||)
+    let res = Span.union (|||) spans1 spans2
     res |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
 
-    let expected = [ Span.create 0 1 Combine.A
-                     Span.create 2 3 Combine.B
-                     Span.create 4 5 Combine.A
-                     Span.create 5 6 Combine.B
-                     Span.create 7 8 Combine.A
-                     Span.create 8 10 Combine.AnB
-                     Span.create 10 11 Combine.B
-                     Span.create 12 13 Combine.B
-                     Span.create 13 14 Combine.AnB
-                     Span.create 14 15 Combine.A
-                     Span.create 16 17 Combine.B
-                     Span.create 17 20 Combine.AnB
-                     Span.create 20 21 Combine.B 
-                     Span.create 25 26 Combine.A
-                     Span.create 26 40 Combine.AnB
-                     Span.create 40 45 Combine.A
-                     Span.create 45 50 Combine.AnB
-                     Span.create 50 80 Combine.A
-                     Span.create 80 100 Combine.AnB
-                     Span.create 100 200 Combine.A ]
+    let expected = [ Span.create Combine.A 0 1
+                     Span.create Combine.B 2 3
+                     Span.create Combine.A 4 5
+                     Span.create Combine.B 5 6
+                     Span.create Combine.A 7 8 
+                     Span.create Combine.AnB 8 10
+                     Span.create Combine.B 10 11
+                     Span.create Combine.B 12 13
+                     Span.create Combine.AnB 13 14
+                     Span.create Combine.A 14 15
+                     Span.create Combine.B 16 17
+                     Span.create Combine.AnB 17 20
+                     Span.create Combine.B 20 21
+                     Span.create Combine.A 25 26
+                     Span.create Combine.AnB 26 40
+                     Span.create Combine.A 40 45
+                     Span.create Combine.AnB 45 50
+                     Span.create Combine.A 50 80
+                     Span.create Combine.AnB 80 100
+                     Span.create Combine.A 100 200 ]
     Assert.AreEqual(expected, res)
 
 [<Test>]
 let checkMerge () =
-    let spans = [ Span.create 0 1 Combine.A
-                  Span.create 2 3 Combine.A
-                  Span.create 3 10 Combine.A
-                  Span.create 13 15 Combine.B
-                  Span.create 15 20 Combine.B ]
+    let spans = [ Span.create Combine.A 0 1
+                  Span.create Combine.A 2 3
+                  Span.create Combine.A 3 10
+                  Span.create Combine.B 13 15
+                  Span.create Combine.B 15 20 ]
 
     printfn "input:"
     spans |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
@@ -114,47 +114,29 @@ let checkMerge () =
     printfn "result:"
     res |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
     
-    let expected = [ Span.create 0 1 Combine.A
-                     Span.create 2 10 Combine.A
-                     Span.create 13 20 Combine.B ]
+    let expected = [ Span.create Combine.A 0 1
+                     Span.create Combine.A 2 10
+                     Span.create Combine.B 13 20 ]
     Assert.AreEqual(expected, res)
 
 [<Test>]
-let checkFill () =
-    let spans = [ Span.create 0 1 Combine.A
-                  Span.create 2 3 Combine.A
-                  Span.create 3 10 Combine.A
-                  Span.create 13 15 Combine.B
-                  Span.create 15 20 Combine.B ]
-
-    printfn "input:"
-    spans |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
-    let res = Span.fill spans Combine.AnB
-    printfn ""
-    printfn "result:"
-    res |> List.iter (fun x -> printfn "  [%d, %d[ = %A" x.Start x.Stop x.Value)
-
-    let expected = [ Span.create 0 1 Combine.A
-                     Span.create 1 2 Combine.AnB
-                     Span.create 2 3 Combine.A
-                     Span.create 3 10 Combine.A
-                     Span.create 10 13 Combine.AnB
-                     Span.create 13 15 Combine.B
-                     Span.create 15 20 Combine.B ]
+let checkEmpty () =
+    let res = Span.empty Combine.A 1 10
+    let expected = [ { Value = Combine.A; Start = 1; Stop = 10 } ]
     Assert.AreEqual(expected, res)
 
 
 
 [<Test>]
 let checkCreateNominal () =
-    let int = Span.create 10 20 "toto"
-    let expected = { Start = 10; Stop = 20; Value = "toto" }
+    let int = Span.create "toto" 10 20
+    let expected = { Value = "toto"; Start = 10; Stop = 20 }
     Assert.AreEqual(expected, int)
 
 [<Test>]
 let failureIfStartAndStopEqual () =
     try
-        Span.create 10 10 "toto" |> ignore
+        Span.create "toto" 10 10 |> ignore
         failwithf "Can't create interval with Start and Stop equal"
     with
         _ -> ()
@@ -162,27 +144,27 @@ let failureIfStartAndStopEqual () =
 [<Test>]
 let failureIfStartGreaterThanStop () =
     try
-        Span.create 10 8 "toto" |> ignore
+        Span.create "toto" 10 8 |> ignore
         failwithf "Can't create interval with Start greater than Stop"
     with
         _ -> ()
 
 [<Test>]
 let checkValidateNominal () =
-    let segs = [ Span.create 0 1 Combine.A
-                 Span.create 2 3 Combine.A
-                 Span.create 3 10 Combine.A
-                 Span.create 13 15 Combine.B
-                 Span.create 15 20 Combine.B ]
+    let segs = [ Span.create Combine.A 0 1
+                 Span.create Combine.A 2 3
+                 Span.create Combine.A 3 10
+                 Span.create Combine.B 13 15
+                 Span.create Combine.B 15 20 ]
     segs |> Span.validate
 
 [<Test>]
 let checkValidateRejectsInvalidSpan () =
-    let segs = [ Span.create 0 1 Combine.A
-                 Span.create 2 3 Combine.A
-                 { Span.Start = 10; Span.Stop = 3; Span.Value = Combine.A }
-                 Span.create 13 15 Combine.B
-                 Span.create 15 20 Combine.B ]
+    let segs = [ Span.create Combine.A 0 1
+                 Span.create Combine.A 2 3
+                 { Value = Combine.A; Start = 10; Stop = 3 }
+                 Span.create Combine.B 13 15
+                 Span.create Combine.B 15 20 ]
     try
         segs |> Span.validate
         failwithf "Validation should have detected invalid span"
@@ -191,11 +173,11 @@ let checkValidateRejectsInvalidSpan () =
 
 [<Test>]
 let checkValidateRejectsUnorderedSpans () =
-    let segs = [ Span.create 0 1 Combine.A
-                 Span.create 3 10 Combine.A
-                 Span.create 2 3 Combine.A
-                 Span.create 13 15 Combine.B
-                 Span.create 15 20 Combine.B ]
+    let segs = [ Span.create Combine.A 0 1
+                 Span.create Combine.A 3 10
+                 Span.create Combine.A 2 3
+                 Span.create Combine.B 13 15
+                 Span.create Combine.B 15 20 ]
     try
         segs |> Span.validate
         failwithf "Validation should have detected unordered spans"

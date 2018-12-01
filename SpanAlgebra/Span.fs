@@ -1,29 +1,29 @@
 namespace SpanAlgebra
 
-type Span<'t, 'v when 't : comparison and 'v : equality> = 
-    { Start : 't
-      Stop : 't
-      Value : 'v}
+type Span<'v, 't when 'v : equality  and 't : comparison> = 
+    { Value : 'v
+      Start : 't
+      Stop : 't }
 
 module Span =
 
     // helper function to create a valid span
     // if you do not use it you are at your own risks :-)
-    let create start stop value = 
-        if start < stop then { Start = start; Stop = stop; Value = value }
+    let create value start stop = 
+        if start < stop then { Value = value ; Start = start; Stop = stop }
         else failwithf "start must be strictly lower than stop"
 
     // compute the intersection of two spans lists
     // the result is not necessarily optimal - see merge
-    let intersect span1 span2 comb =
+    let intersect comb span1 span2 =
         let rec intersect span1 span2 =
             match span1, span2 with
             | head1::tail1, head2::tail2 -> if (head2.Start < head1.Start) || (head1.Start = head2.Start && head2.Stop < head1.Stop) then intersect span2 span1
                                             elif head1.Stop <= head2.Start then intersect tail1 span2
                                             else
-                                                let head = { Start = max head1.Start head2.Start
-                                                             Stop = min head1.Stop head2.Stop
-                                                             Value = comb head1.Value head2.Value }
+                                                let head = { Value = comb head1.Value head2.Value 
+                                                             Start = max head1.Start head2.Start
+                                                             Stop = min head1.Stop head2.Stop }
                                                 head :: if head1.Stop = head.Stop && head2.Stop = head.Stop then
                                                             intersect tail1 tail2
                                                         elif head1.Stop = head.Stop then
@@ -37,7 +37,7 @@ module Span =
 
     // compute the union of two span lists
     // the result is not necessarily optimal - see merge
-    let union span1 span2 comb =
+    let union comb span1 span2 =
         let rec union span1 span2 =
             match span1, span2 with
             | head1::tail1, head2::tail2 -> if (head2.Start < head1.Start) || (head1.Start = head2.Start && head1.Stop < head2.Stop) then union span2 span1
@@ -47,8 +47,8 @@ module Span =
                                                 let remainder = { head1 with Start = head2.Start }
                                                 head :: union (remainder::tail1) span2
                                             else
-                                                let head = { head1 with Stop = head2.Stop
-                                                                        Value = comb head1.Value head2.Value }                                        
+                                                let head = { head1 with Value = comb head1.Value head2.Value
+                                                                        Stop = head2.Stop }                                        
                                                 head :: if head1.Start = head2.Start && head1.Stop = head2.Stop then
                                                             union tail1 tail2 
                                                         else
@@ -68,16 +68,9 @@ module Span =
         | _ -> spans
 
     // fill holes with provided value
-    let fill spans value =
-        let rec fill prevStop spans =
-            match spans with
-            | [] -> []
-            | ({ Start = start; Stop = stop; Value = _ } as head) :: tail -> if prevStop = start then head :: fill stop tail
-                                                                             else { Start = prevStop; Stop = start; Value = value } :: head :: fill stop tail
-        match spans with
-        | [] -> []
-        | ({ Start = _; Stop = stop; Value = _ } as head) :: tail -> head :: fill stop tail
-
+    let empty start stop value =
+        create start stop value |> List.singleton
+ 
     // check list for correctness
     let validate spans =
         let rec validate ({ Span.Start = prevStart; Span.Stop = prevStop; Span.Value = prevValue } as prevHead) spans =
