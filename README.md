@@ -7,7 +7,7 @@ This is a simple F# library to compute intersections and unions on list of spans
 ## Type
 But, what is a span ? It is a type with a value spanning on an interval [start, end[ (ie: start is included but end is not). Also, according to the definition, the interval can't be empty.
 
-Type has containts:
+Type has constraints:
 * start and end can be whatever you want until it's comparable (intersection & union)
 * value can also be whatever you want until it's equatable (merge)
 
