@@ -5,6 +5,9 @@ type Span<'v, 't when 'v : equality  and 't : comparison> =
       Start : 't
       Stop : 't }
 
+type Temporal<'v, 't when 'v : equality  and 't : comparison> = Span<'v, 't> list
+
+
 module Span =
 
     // helper function to create a valid span
@@ -37,25 +40,44 @@ module Span =
 
     // compute the union of two span lists
     // the result is not necessarily optimal - see merge
-    let union comb span1 span2 =
-        let rec union span1 span2 =
+    let rec union<'a, 'b, 'c, 't when 'a : equality 
+                                 and 'b : equality 
+                                 and 'c : equality 
+                                 and 't : comparison> (comb: 'a option -> 'b option -> 'c) (span1: Temporal<'a, 't>) (span2: Temporal<'b, 't>) : Temporal<'c, 't> =
+        let rec runion span1 span2 =
             match span1, span2 with
-            | head1::tail1, head2::tail2 -> if (head2.Start < head1.Start) || (head1.Start = head2.Start && head1.Stop < head2.Stop) then union span2 span1
-                                            elif head1.Stop <= head2.Start then head1 :: union tail1 span2
+            | head1::tail1, head2::tail2 -> // span1 must be before span2
+                                            if (head2.Start < head1.Start) || (head1.Start = head2.Start && head1.Stop < head2.Stop) then
+                                                union (fun x y -> comb y x) span2 span1
+                                            // span1 does not overlap with span2
+                                            elif head1.Stop <= head2.Start then
+                                                let newHead = { Start = head1.Start
+                                                                Stop = head1.Stop
+                                                                Value = comb (Some head1.Value) None }
+                                                newHead :: runion tail1 span2
+                                            // span1 overlaps span2
                                             elif head1.Start < head2.Start then
-                                                let head = { head1 with Stop = head2.Start }
+                                                let newHead = { Start = head1.Start
+                                                                Stop = head2.Start
+                                                                Value = comb (Some head1.Value) None }
                                                 let remainder = { head1 with Start = head2.Start }
-                                                head :: union (remainder::tail1) span2
+                                                newHead :: runion (remainder::tail1) span2
                                             else
-                                                let head = { head1 with Value = comb head1.Value head2.Value
-                                                                        Stop = head2.Stop }                                        
-                                                head :: if head1.Start = head2.Start && head1.Stop = head2.Stop then
-                                                            union tail1 tail2 
-                                                        else
-                                                            let remainder = { head1 with Start = head2.Stop }
-                                                            union (remainder::tail1) tail2
-            | _ -> span1 @ span2
-        union span1 span2                                
+                                                let newHead = { Start = head1.Start
+                                                                Stop = head2.Stop
+                                                                Value = comb (Some head1.Value) (Some head2.Value) }                                        
+                                                if head1.Start = head2.Start && head1.Stop = head2.Stop then
+                                                    newHead :: runion tail1 tail2 
+                                                else
+                                                    let remainder = { head1 with Start = head2.Stop }
+                                                    newHead :: runion (remainder::tail1) tail2
+            | span1, [] -> span1 |> List.map (fun x -> { Start = x.Start
+                                                         Stop = x.Stop
+                                                         Value = comb (Some x.Value) None})
+            | [], span2 -> span2 |> List.map (fun x -> { Start = x.Start
+                                                         Stop = x.Stop
+                                                         Value = comb None (Some x.Value) })
+        runion span1 span2
 
     // merge adjacent spans in the list if the value is the same
     // typically intersect and union do not produce optimal result (for code simplicity)
