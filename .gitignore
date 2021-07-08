@@ -10,3 +10,6 @@ packages
 *~
 all.userprefs
 *.mdb
+
+.fake
+.ionide
