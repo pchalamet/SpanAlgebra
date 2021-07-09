@@ -1,5 +1,7 @@
 module SpanAlgebraTests
+open System
 open NUnit.Framework
+open FsUnit
 open SpanAlgebra
 
 
@@ -48,7 +50,7 @@ let checkCombine () =
                      Span.create (Combination.A, 4) 13 14
                      Span.create (Combination.A, 5) 17 20
                      Span.create (Combination.A, 6) 26 40 ]
-    Assert.AreEqual(expected, res)
+    res |> should equal expected
 
 [<Test>]
 let checkMerge () =
@@ -68,13 +70,13 @@ let checkMerge () =
     let expected = [ Span.create Combination.A 0 1
                      Span.create Combination.A 2 10
                      Span.create Combination.B 13 20 ]
-    Assert.AreEqual(expected, res)
+    res |> should equal expected
 
 [<Test>]
 let checkSingleton () =
     let res = Span.singleton Combination.A 1 10
     let expected = [ { Value = Combination.A; Start = 1; Stop = 10 } ]
-    Assert.AreEqual(expected, res)
+    res |> should equal expected
 
 
 
@@ -82,23 +84,15 @@ let checkSingleton () =
 let checkCreateNominal () =
     let int = Span.create "toto" 10 20
     let expected = { Value = "toto"; Start = 10; Stop = 20 }
-    Assert.AreEqual(expected, int)
+    int |> should equal expected
 
 [<Test>]
 let failureIfStartAndStopEqual () =
-    try
-        Span.create "toto" 10 10 |> ignore
-        failwithf "Can't create interval with Start and Stop equal"
-    with
-        _ -> ()
+    (fun () -> Span.create "toto" 10 10 |> ignore) |> should throw typeof<Exception> 
     
 [<Test>]
 let failureIfStartGreaterThanStop () =
-    try
-        Span.create "toto" 10 8 |> ignore
-        failwithf "Can't create interval with Start greater than Stop"
-    with
-        _ -> ()
+    (fun () -> Span.create "toto" 10 8 |> ignore) |> should throw typeof<Exception>
 
 [<Test>]
 let checkValidateNominal () =
@@ -107,8 +101,8 @@ let checkValidateNominal () =
                  Span.create Combination.A 3 10
                  Span.create Combination.B 13 15
                  Span.create Combination.B 15 20 ]
-    let res = segs |> Span.validate
-    Assert.AreEqual(segs, res)
+    segs |> Span.validate |> should equal true
+
 
 [<Test>]
 let checkValidateRejectsInvalidSpan () =
@@ -117,11 +111,8 @@ let checkValidateRejectsInvalidSpan () =
                  { Value = Combination.A; Start = 10; Stop = 3 }
                  Span.create Combination.B 13 15
                  Span.create Combination.B 15 20 ]
-    try
-        segs |> Span.validate |> ignore
-        failwithf "Validation should have detected invalid span"
-    with
-        _ -> ()
+
+    segs |> Span.validate |> should equal false
 
 [<Test>]
 let checkValidateRejectsUnorderedSpans () =
@@ -130,11 +121,8 @@ let checkValidateRejectsUnorderedSpans () =
                  Span.create Combination.A 2 3
                  Span.create Combination.B 13 15
                  Span.create Combination.B 15 20 ]
-    try
-        segs |> Span.validate |> ignore
-        failwithf "Validation should have detected unordered spans"
-    with
-        _ -> ()
+
+    segs |> Span.validate |> should equal false
 
 [<Test>]
 let checkClamp () =
@@ -151,4 +139,20 @@ let checkClamp () =
     let expected = [ Span.create Combination.A 8 10
                      Span.create Combination.A 13 15
                      Span.create Combination.A 17 19 ]
-    Assert.AreEqual(expected, res)
+    res |> should equal expected
+
+[<Test>]
+let checkCoverage() =
+    [] |> Span.coverage 0 200 |> should equal false
+
+    let spans1 = [ Span.create Combination.A 0 1
+                   Span.create Combination.A 4 5
+                   Span.create Combination.A 7 10
+                   Span.create Combination.A 13 15
+                   Span.create Combination.A 17 20 
+                   Span.create Combination.A 25 200 ]
+    spans1 |> Span.coverage 0 200 |> should equal false
+
+    let spans2 = [ Span.create Combination.A 25 200 ]
+    spans2 |> Span.coverage 25 200 |> should equal true
+    

@@ -67,6 +67,15 @@ module Span =
             | _ -> []
         runion temporal1 temporal2
 
+    let coverage start stop temporal =
+        let rec validate temporal curr =
+            match temporal with
+            | [ last ] -> last.Start = curr && last.Stop = stop
+            | head :: tail -> if head.Start <> curr then false
+                              else validate tail head.Stop
+            | _ -> false
+        validate temporal start
+
     // merge adjacent spans in the list if the value is the same
     // typically intersect and union do not produce optimal result (for code simplicity)
     let rec merge spans =
@@ -84,13 +93,13 @@ module Span =
     // check list for correctness
     let validate spans =
         let rec validate ({ Span.Start = prevStart; Span.Stop = prevStop; Span.Value = prevValue } as prevHead) spans =
-            if prevStop <= prevStart then failwithf "%A has Start after Stop" prevHead
-            match spans with
-            | [] -> [prevHead]
-            | ({ Span.Start = start; Span.Stop = _; Span.Value = _ } as head) :: tail -> if start < prevStop then failwithf "%A starts before %A" head prevHead
-                                                                                         prevHead :: validate spans.Head tail
+            if prevStop <= prevStart then false
+            else
+                match spans with
+                | [] -> true
+                | ({ Span.Start = start; Span.Stop = _; Span.Value = _ } as head) :: tail -> if start < prevStop then false
+                                                                                             else validate spans.Head tail
 
         match spans with
-        | [] -> []
+        | [] -> true
         | head:: tail -> validate head tail
-
