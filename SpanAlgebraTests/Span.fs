@@ -136,19 +136,19 @@ let checkValidateRejectsUnorderedSpans () =
     with
         _ -> ()
 
-// [<Test>]
-// let checkClamp () =
-//     let spans1 = [ Span.create Combination.A 0 1
-//                    Span.create Combination.A 4 5
-//                    Span.create Combination.A 7 10
-//                    Span.create Combination.A 13 15
-//                    Span.create Combination.A 17 20 
-//                    Span.create Combination.A 25 200 ]
+[<Test>]
+let checkClamp () =
+    let spans1 = [ Span.create Combination.A 0 1
+                   Span.create Combination.A 4 5
+                   Span.create Combination.A 7 10
+                   Span.create Combination.A 13 15
+                   Span.create Combination.A 17 20 
+                   Span.create Combination.A 25 200 ]
 
-//     let res = Span.clamp spans1 8 19
-//     res |> Span.print
+    let res = Span.clamp spans1 8 19
+    res |> Span.print
 
-//     let expected = [ Span.create Combination.A 8 10
-//                      Span.create Combination.A 13 15
-//                      Span.create Combination.A 17 19 ]
-//     Assert.AreEqual(expected, res)
+    let expected = [ Span.create Combination.A 8 10
+                     Span.create Combination.A 13 15
+                     Span.create Combination.A 17 19 ]
+    Assert.AreEqual(expected, res)

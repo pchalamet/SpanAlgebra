@@ -19,20 +19,17 @@ module Span =
     let print temporal =
         temporal |> List.iter (fun x -> printfn "  [%A, %A[ = %A" x.Start x.Stop x.Value)
 
-    // let clamp temporal start stop =
-    //     let rec clamp (temporal: Temporal<'a, 't>) =
-    //         match temporal with
-    //         | head :: tail -> if head.Stop <= start then clamp tail
-    //                           elif stop < head.Start then []
-    //                           else
-    //                               let headClamp = { head with Start = max head.Start start
-    //                                                           Stop = min head.Stop stop }
-    //                               let tail = if head.Stop = headClamp.Stop then tail
-    //                                          else { head with Start = headClamp.Stop} :: tail
-    //                               printfn "Clamp gen: %A" headClamp
-    //                               headClamp :: clamp tail
-    //         | _ -> []
-    //     clamp temporal
+    let clamp temporal start stop =
+        let rec clamp (temporal: Temporal<'a, 't>) =
+            match temporal with
+            | head :: tail -> if head.Stop <= start then clamp tail
+                              elif stop < head.Start then []
+                              else
+                                  let headClamp = { head with Start = max head.Start start
+                                                              Stop = min head.Stop stop }
+                                  headClamp :: clamp tail
+            | _ -> []
+        clamp temporal
 
     // compute the union of two span lists
     // the result is not necessarily optimal - see merge
