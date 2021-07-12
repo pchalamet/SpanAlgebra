@@ -59,10 +59,11 @@ module Span =
                                                 let headUnion = { Start = max head1.Start head2.Start
                                                                   Stop = min head1.Stop head2.Stop
                                                                   Value = comb head1.Value head2.Value }
+
                                                 let tail1 = if head1.Stop = headUnion.Stop then tail1
-                                                            else { head1 with Stop = headUnion.Stop} :: tail1
+                                                            else { head1 with Start = headUnion.Stop} :: tail1
                                                 let tail2 = if head2.Stop = headUnion.Stop then tail2
-                                                            else { head2 with Stop = headUnion.Stop} :: tail2
+                                                            else { head2 with Start = headUnion.Stop} :: tail2
                                                 headUnion :: runion tail1 tail2
             | _ -> []
         runion temporal1 temporal2

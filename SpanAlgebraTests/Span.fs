@@ -49,7 +49,9 @@ let checkCombine () =
     let expected = [ Span.create (Combination.A, 3) 8 10
                      Span.create (Combination.A, 4) 13 14
                      Span.create (Combination.A, 5) 17 20
-                     Span.create (Combination.A, 6) 26 40 ]
+                     Span.create (Combination.A, 6) 26 40 
+                     Span.create (Combination.A, 7) 45 50
+                     Span.create (Combination.A, 8) 80 100 ]
     res |> should equal expected
 
 [<Test>]
