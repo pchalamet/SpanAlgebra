@@ -17,7 +17,7 @@ module Span =
         else failwithf "start must be strictly lower than stop"
 
     let print temporal =
-        temporal |> List.iter (fun x -> printfn "  [%A, %A[ = %A" x.Start x.Stop x.Value)
+        temporal |> List.iter (fun x -> printfn $"  [%A{x.Start}, %A{x.Stop}[ = %A{x.Value}")
 
     let clamp temporal start stop =
         let rec clamp (temporal: Temporal<'a, 't>) =
